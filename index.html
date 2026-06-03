@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen Interactivo — Matemáticas Financieras 2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul:        #1a3560;
+    --azul-med:    #2b5797;
+    --azul-claro:  #dce8f5;
+    --dorado:      #b8872a;
+    --gris:        #f4f5f7;
+    --gris-borde:  #c8cdd6;
+    --negro:       #1c1c1e;
+    --rojo:        #b03030;
+    --verde:       #1e6b3e;
+    --verde-bg:    #eaf6ee;
+    --blanco:      #ffffff;
+    --radio:       8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11.5pt;
+    color: var(--negro);
+    background: #edf1f7;
+    padding: 30px 15px;
+    line-height: 1.5;
+  }
+
+  .pagina {
+    background: var(--blanco);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    border-radius: var(--radio);
+  }
+
+  .titulo-examen {
+    font-size: 22pt;
+    font-weight: 700;
+    color: var(--azul);
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 3px solid var(--dorado);
+    padding-bottom: 15px;
+  }
+
+  .bloque-header {
+    background: var(--azul);
+    color: var(--blanco);
+    border-radius: var(--radio);
+    padding: 10px 16px;
+    margin: 30px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .bloque-header .num {
+    background: var(--dorado);
+    color: var(--blanco);
+    font-weight: 700;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .bloque-header .titulo-bloque {
+    font-size: 13pt;
+    font-weight: 600;
+  }
+
+  .pregunta-container {
+    margin-bottom: 25px;
+    background: #fafafa;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio);
+    overflow: hidden;
+    padding-bottom: 10px;
+  }
+
+  .enunciado {
+    background: var(--azul-claro);
+    padding: 12px 16px;
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--azul);
+    border-bottom: 1px solid var(--gris-borde);
+  }
+  .num-p {
+    color: var(--dorado);
+    font-weight: 700;
+    margin-right: 5px;
+  }
+  .pts {
+    font-size: 9.5pt;
+    color: var(--azul-med);
+    font-weight: 400;
+    font-style: italic;
+    margin-left: 6px;
+  }
+
+  .opciones-container {
+    padding: 10px 16px;
+  }
+
+  .opcion-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 12px;
+    margin-css: 6px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--blanco);
+    transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .opcion-item:hover {
+    background: #f0f4f8;
+    border-color: var(--azul-med);
+  }
+  .opcion-item input {
+    margin-right: 12px;
+    margin-top: 4px;
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+  .opcion-texto b {
+    color: var(--azul-med);
+    margin-right: 4px;
+  }
+
+  /* Estados de validación */
+  .opcion-item.seleccionada {
+    border-color: var(--azul);
+    background: #eef3fa;
+  }
+  .revisado .opcion-item.correcto {
+    background: var(--verde-bg) !important;
+    border-color: var(--verde) !important;
+    color: var(--verde) !important;
+    font-weight: 600;
+  }
+  .revisado .opcion-item.incorrecto {
+    background: #fdf2f2 !important;
+    border-color: var(--rojo) !important;
+    color: var(--rojo) !important;
+  }
+
+  .area-abierta {
+    padding: 15px 16px;
+  }
+  .criterios {
+    font-size: 9.8pt;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 10px;
+    background: #fff8eb;
+    padding: 8px 12px;
+    border-left: 3px solid var(--dorado);
+  }
+  .criterios b { color: var(--azul-med); }
+  
+  .txt-respuesta {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11pt;
+    resize: vertical;
+  }
+
+  .retroalimentacion {
+    display: none;
+    margin: 10px 16px;
+    padding: 10px 14px;
+    background: var(--verde-bg);
+    border: 1px solid #9bd0b0;
+    border-radius: 6px;
+    font-size: 10pt;
+    color: var(--verde);
+    font-weight: 500;
+  }
+  .revisado .retroalimentacion {
+    display: block;
+  }
+  .retroalimentacion.abierta {
+    background: #f0f4f8;
+    border-color: var(--azul-med);
+    color: var(--azul);
+  }
+
+  .barra-inferior {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid var(--gris-borde);
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border-radius: var(--radio);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11pt;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-evaluar {
+    background: var(--azul);
+    color: var(--blanco);
+  }
+  .btn-evaluar:hover { background: #122544; }
+  .btn-reiniciar {
+    background: #6c757d;
+    color: var(--blanco);
+  }
+  .btn-reiniciar:hover { background: #5a6268; }
+
+  .resultado-global {
+    display: none;
+    text-align: center;
+    margin-top: 25px;
+    padding: 20px;
+    background: #eef3fa;
+    border: 2px solid var(--azul);
+    border-radius: var(--radio);
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--azul);
+  }
+</style>
+</head>
+<body>
+
+<div class="pagina">
+  <div class="titulo-examen">Examen Interactivo: Matemáticas Financieras 2</div>
+
+  <!-- BLOQUE 1 -->
+  <div class="bloque-header">
+    <div class="num">1</div>
+    <div class="titulo-bloque">Fraudes en Inversiones — Detección y Señales de Alerta</div>
+  </div>
+
+  <!-- P1 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">1.</span> Una plataforma de inversión te muestra un <em>dashboard</em> en tiempo real con precios de ASERCA y te ofrece 35% de rendimiento trimestral sobre granos almacenados. ¿Cuál es el primer paso para verificar si es legítima?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p1" value="A"><div class="opcion-texto"><b>A)</b> Buscar la empresa en Google para ver si tiene redes sociales activas</div></label>
+      <label class="opcion-item"><input type="radio" name="p1" value="B"><div class="opcion-texto"><b>B)</b> Consultar el número de folio de almacenaje en el Registro Nacional de Almacenes (RNA), que es público y gratuito</div></label>
+      <label class="opcion-item"><input type="radio" name="p1" value="C"><div class="opcion-texto"><b>C)</b> Pedir referencias a amigos que ya invirtieron en la plataforma</div></label>
+      <label class="opcion-item"><input type="radio" name="p1" value="D"><div class="opcion-texto"><b>D)</b> Revisar si el contrato está firmado ante notario público</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: El RNA es verificable gratuitamente; el dashboard es decorativo y no prueba que haya grano real.</div>
+  </div>
+
+  <!-- P2 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="C">
+    <div class="enunciado"><span class="num-p">2.</span> Un contrato de inversión incluye la cláusula: <em>"El inversionista no podrá solicitar devolución durante el plazo operativo; si lo hace, perderá el 40% de su capital."</em> ¿Qué finalidad tiene esta cláusula para el estafador?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p2" value="A"><div class="opcion-texto"><b>A)</b> Proteger legalmente a la empresa frente a incumplimientos del inversionista</div></label>
+      <label class="opcion-item"><input type="radio" name="p2" value="B"><div class="opcion-texto"><b>B)</b> Garantizar que el flujo de caja del negocio sea estable</div></label>
+      <label class="opcion-item"><input type="radio" name="p2" value="C"><div class="opcion-texto"><b>C)</b> Desincentiva que el inversionista reaccione al detector irregularidades, atrapándolo en el esquema</div></label>
+      <label class="opcion-item"><input type="radio" name="p2" value="D"><div class="opcion-texto"><b>D)</b> Cumplir con requisitos de la CNBV para inversiones de alto riesgo</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: La penalización de salida es una trampa clásica que evita que el inversionista actúe cuando detecta el fraude.</div>
+  </div>
+
+  <!-- P3 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">3.</span> Una inversión en criptomonedas afirma tener jurisdicción en las Islas Caimán para resolver controversias. ¿Qué implica esto para el inversionista mexicano?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p3" value="A"><div class="opcion-texto"><b>A)</b> Mayor seguridad jurídica, pues las Islas Caimán tienen regulación financiera estricta</div></label>
+      <label class="opcion-item"><input type="radio" name="p3" value="B"><div class="opcion-texto"><b>B)</b> En la práctica el fraude es irrecuperable: tendría que demandar en el extranjero bajo ley caribeña</div></label>
+      <label class="opcion-item"><input type="radio" name="p3" value="C"><div class="opcion-texto"><b>C)</b> Acceso a beneficios fiscales internacionales que incrementan el rendimiento</div></label>
+      <label class="opcion-item"><input type="radio" name="p3" value="D"><div class="opcion-texto"><b>D)</b> El fondo está auditado por organismos internacionales de mayor rigor que la CNBV</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: La jurisdicción offshore hace el fraude prácticamente irrecuperable para un inversionista promedio.</div>
+  </div>
+
+  <!-- P4 -->
+  <div class="pregunta-container abierta">
+    <div class="enunciado"><span class="num-p">4.</span> Describe el proceso de verificación que realizarías antes de invertir en una "microfranquicia de purificadores importados de Alemania" con pago irrevocable previo a la entrega. Menciona al menos <u>tres</u> instituciones o registros públicos que consultarías y explica qué buscarías en cada uno. <span class="pts">(3 pts)</span></div>
+    <div class="area-abierta">
+      <div class="criterios"><b>Criterios de Autoevaluación:</b> • Menciona instituciones verificables (IMPI, CNBV, SAT-RFC, RPP) &nbsp;·&nbsp; • Explica qué información busca en cada una &nbsp;·&nbsp; • Concluye si la propuesta es legítima o fraudulenta</div>
+      <textarea class="txt-respuesta" placeholder="Escribe tu respuesta aquí para compararla al finalizar..."></textarea>
+    </div>
+    <div class="retroalimentacion abierta"><b>Guía de Respuesta sugerida:</b> Se debe revisar el RFC en el SAT, la existencia de marcas en el IMPI, y que no cuente con alertas financieras en la CNBV o CONDUSEF. Al ser un pago irrevocable previo, presenta un riesgo altísimo de fraude.</div>
+  </div>
+
+  <!-- BLOQUE 2 -->
+  <div class="bloque-header">
+    <div class="num">2</div>
+    <div class="titulo-bloque">Administración del Hogar — Regla 50/30/20</div>
+  </div>
+
+  <!-- P5 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">5.</span> Según la Regla 50/30/20, si tu ingreso neto mensual es de <b>$18,000 MXN</b>, ¿cuánto debes destinar a gastos discrecionales (deseos)?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p5" value="A"><div class="opcion-texto"><b>A)</b> $9,000 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p5" value="B"><div class="opcion-texto"><b>B)</b> $5,400 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p5" value="C"><div class="opcion-texto"><b>C)</b> $3,600 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p5" value="D"><div class="opcion-texto"><b>D)</b> $2,700 MXN</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: 30% × $18,000 = $5,400 MXN para deseos/gastos discrecionales.</div>
+  </div>
+
+  <!-- P6 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="C">
+    <div class="enunciado"><span class="num-p">6.</span> ¿Cuál de los siguientes gastos corresponde a la categoría de <b>NECESIDAD</b> en la regla 50/30/20?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p6" value="A"><div class="opcion-texto"><b>A)</b> Suscripción mensual a plataforma de streaming</div></label>
+      <label class="opcion-item"><input type="radio" name="p6" value="B"><div class="opcion-texto"><b>B)</b> Salida a cenar con amigos el fin de semana</div></label>
+      <label class="opcion-item"><input type="radio" name="p6" value="C"><div class="opcion-texto"><b>C)</b> Pago mensual del seguro médico</div></label>
+      <label class="opcion-item"><input type="radio" name="p6" value="D"><div class="opcion-texto"><b>D)</b> Compra de ropa de temporada</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: El seguro médico es una necesidad de protección básica; los demás son deseos o gastos discrecionales.</div>
+  </div>
+
+  <!-- P7 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">7.</span> Marco gana $10,000 netos al mes. Sus gastos son: renta $4,200, comida $1,800, transporte $1,000, cine y salidas $2,400, ropa $800 y ahorro $0. ¿Qué porcentaje representan sus necesidades y está dentro de la regla?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p7" value="A"><div class="opcion-texto"><b>A)</b> 42%; sí está dentro del 50%</div></label>
+      <label class="opcion-item"><input type="radio" name="p7" value="B"><div class="opcion-texto"><b>B)</b> 70%; no, sus necesidades superan el 50% permitido</div></label>
+      <label class="opcion-item"><input type="radio" name="p7" value="C"><div class="opcion-texto"><b>C)</b> 50%; está exactamente en el límite</div></label>
+      <label class="opcion-item"><input type="radio" name="p7" value="D"><div class="opcion-texto"><b>D)</b> 32%; no se pueden calcular sin conocer sus deudas</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Necesidades: $4,200 + $1,800 + $1,000 = $7,000 = 70% del ingreso. Supera el 50% de la regla.</div>
+  </div>
+
+  <!-- P8 -->
+  <div class="pregunta-container abierta">
+    <div class="enunciado"><span class="num-p">8.</span> ¿Qué ventaja principal ofrece un Simulador de Vida Financiera Personal como herramienta de aprendizaje? Explica con tus propias palabras y da un ejemplo concreto de una decisión que se puede simular. <span class="pts">(2 pts)</span></div>
+    <div class="area-abierta">
+      <textarea class="txt-respuesta" placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="retroalimentacion abierta"><b>Guía de Respuesta sugerida:</b> Permite experimentar escenarios financieros reales sin arriesgar capital real, como simular el impacto de adquirir una hipoteca o reducir gastos hormiga a largo plazo.</div>
+  </div>
+
+  <!-- P9 -->
+  <div class="pregunta-container abierta">
+    <div class="enunciado"><span class="num-p">9.</span> <b>Valeria</b> tiene un ingreso neto de $12,000 MXN. Sus gastos: renta $4,500, transporte $900, alimentación $1,800, internet $350, Netflix $200, gym $500, salidas $2,500, ropa $1,000, ahorro $0. Aplica la regla 50/30/20: clasifica cada gasto, calcula los montos correctos por categoría y propone un presupuesto corregido. <span class="pts">(4 pts)</span></div>
+    <div class="area-abierta">
+      <div class="criterios"><b>Criterios de Autoevaluación:</b> • Clasifica cada concepto en Necesidades/Deseos/Ahorro &nbsp;·&nbsp; • Calcula los montos correctos ($6,000 / $3,600 / $2,400) &nbsp;·&nbsp; • Propone ajustes con nombre y monto &nbsp;·&nbsp; • Concluye si el perfil de Valeria refleja salud o riesgo financiero</div>
+      <textarea class="txt-respuesta" placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="retroalimentacion abierta"><b>Guía de Respuesta sugerida:</b> Necesidades actuales sumaban $7,550 (Renta, transporte, comida, internet), superando los $6,000 ideales (50%). Se deben recortar salidas y ropa para liberar $2,400 mensuales hacia el ahorro (20%) y balancear los deseos a $3,600 (30%). Su perfil actual refleja riesgo por falta de ahorro.</div>
+  </div>
+
+  <!-- BLOQUE 3 -->
+  <div class="bloque-header">
+    <div class="num">3</div>
+    <div class="titulo-bloque">Gestión Empresarial — Simulador de Emprendimiento en México</div>
+  </div>
+
+  <!-- P10 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">10.</span> Una papelería tiene costos fijos mensuales de <b>$5,400</b> y vende cuadernos a <b>$25</b> con costo variable por unidad de <b>$10</b>. ¿Cuántos cuadernos debe vender para alcanzar el punto de equilibrio?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p10" value="A"><div class="opcion-texto"><b>A)</b> 216 cuadernos</div></label>
+      <label class="opcion-item"><input type="radio" name="p10" value="B"><div class="opcion-texto"><b>B)</b> 360 cuadernos</div></label>
+      <label class="opcion-item"><input type="radio" name="p10" value="C"><div class="opcion-texto"><b>C)</b> 540 cuadernos</div></label>
+      <label class="opcion-item"><input type="radio" name="p10" value="D"><div class="opcion-texto"><b>D)</b> 900 cuadernos</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: PE = CF ÷ (PVU − CVU) = 5,400 ÷ (25 − 10) = 360 cuadernos.</div>
+  </div>
+
+  <!-- P11 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">11.</span> Si una empresa tiene ingresos de <b>$80,000 MXN</b>, costos de ventas de <b>$35,000</b> y gastos operativos de <b>$18,000</b>, ¿cuál es su utilidad neta antes de impuestos?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p11" value="A"><div class="opcion-texto"><b>A)</b> $45,000 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p11" value="B"><div class="opcion-texto"><b>B)</b> $27,000 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p11" value="C"><div class="opcion-texto"><b>C)</b> $62,000 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p11" value="D"><div class="opcion-texto"><b>D)</b> $18,000 MXN</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Utilidad = $80,000 − $35,000 − $18,000 = $27,000 MXN.</div>
+  </div>
+
+  <!-- P12 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="A">
+    <div class="enunciado"><span class="num-p">12.</span> ¿Cuál de las siguientes opciones es un <b>COSTO VARIABLE</b> en un negocio de jugos naturales?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p12" value="A"><div class="opcion-texto"><b>A)</b> Frutas y verduras compradas por kilo para preparar cada pedido</div></label>
+      <label class="opcion-item"><input type="radio" name="p12" value="B"><div class="opcion-texto"><b>B)</b> Renta mensual del local comercial</div></label>
+      <label class="opcion-item"><input type="radio" name="p12" value="C"><div class="opcion-texto"><b>C)</b> Sueldo fijo del empleado de tiempo completo</div></label>
+      <label class="opcion-item"><input type="radio" name="p12" value="D"><div class="opcion-texto"><b>D)</b> Pago mensual del servicio de internet del negocio</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Los insumos (frutas/verduras) varían directamente con la producción. Los demás son costos fijos.</div>
+  </div>
+
+  <!-- P13 -->
+  <div class="pregunta-container abierta">
+    <div class="enunciado"><span class="num-p">13.</span> Diseña un presupuesto de arranque para un negocio de <em>burritos y quesadillas</em> en El Salto, Jalisco, con un capital inicial de <b>$25,000 MXN</b>. Incluye: inversión inicial, costos fijos mensuales, costos variables por unidad, precio de venta y calcula el punto de equilibrio mensual. <span class="pts">(4 pts)</span></div>
+    <div class="area-abierta">
+      <div class="criterios"><b>Criterios de Autoevaluación:</b> • Distingue inversión inicial vs. costos recurrentes &nbsp;·&nbsp; • Aplica fórmula: PE = CF ÷ (PVU − CVU) &nbsp;·&nbsp; • Valores coherentes con contexto local &nbsp;·&nbsp; • Comenta la viabilidad en el primer mes</div>
+      <textarea class="txt-respuesta" placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="retroalimentacion abierta"><b>Guía de Respuesta sugerida:</b> Inversión en equipamiento (plancha, utensilios). Costos Fijos (renta del puesto, gas). Costos Variables (tortillas, carne, queso). El cálculo del Punto de Equilibrio debe demostrar cuántas unidades vender para cubrir exactamente la suma de costos fijos y variables.</div>
+  </div>
+
+  <!-- BLOQUE 4 -->
+  <div class="bloque-header">
+    <div class="num">4</div>
+    <div class="titulo-bloque">Velas Japonesas — Análisis Técnico</div>
+  </div>
+
+  <!-- P14 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="C">
+    <div class="enunciado"><span class="num-p">14.</span> Una vela japonesa de cuerpo largo <b>rojo (bajista)</b> con mechas muy pequeñas en ambos extremos, ¿qué indica sobre el comportamiento del mercado durante ese periodo?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p14" value="A"><div class="opcion-texto"><b>A)</b> Los compradores tomaron el control desde la apertura hasta el cierre</div></label>
+      <label class="opcion-item"><input type="radio" name="p14" value="B"><div class="opcion-texto"><b>B)</b> El mercado estuvo muy volátil con grandes oscilaciones de precio</div></label>
+      <label class="opcion-item"><input type="radio" name="p14" value="C"><div class="opcion-texto"><b>C)</b> Los vendedores dominaron todo el periodo; el precio abrió alto y cerró bajo con poca resistencia compradora</div></label>
+      <label class="opcion-item"><input type="radio" name="p14" value="D"><div class="opcion-texto"><b>D)</b> El precio se mantuvo estable sin dirección clara</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Cuerpo largo rojo = apertura alta, cierre bajo, presión vendedora dominante durante toda la sesión.</div>
+  </div>
+
+  <!-- P15 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="A">
+    <div class="enunciado"><span class="num-p">15.</span> El patrón <b>"Estrella del Atardecer" (Evening Star)</b> aparece después de una tendencia alcista. ¿Qué señal da al analista técnico?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p15" value="A"><div class="opcion-texto"><b>A)</b> Posible reversión bajista: la tendencia alcista puede estar agotándose</div></label>
+      <label class="opcion-item"><input type="radio" name="p15" value="B"><div class="opcion-texto"><b>B)</b> Continuación de la tendencia alcista con mayor impulso</div></label>
+      <label class="opcion-item"><input type="radio" name="p15" value="C"><div class="opcion-texto"><b>C)</b> Señal neutral que no implica cambio de dirección</div></label>
+      <label class="opcion-item"><input type="radio" name="p15" value="D"><div class="opcion-texto"><b>D)</b> Zona de soporte muy fuerte donde conviene comprar</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: El Evening Star tras tendencia alcista es una señal clásica de posible reversión a la baja.</div>
+  </div>
+
+  <!-- P16 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">16.</span> ¿Qué información <b>SÍ</b> se puede leer directamente de una vela japonesa individual?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p16" value="A"><div class="opcion-texto"><b>A)</b> El número exacto de contratos operados durante el periodo</div></label>
+      <label class="opcion-item"><input type="radio" name="p16" value="B"><div class="opcion-texto"><b>B)</b> El precio de apertura, cierre, máximo y mínimo del periodo</div></label>
+      <label class="opcion-item"><input type="radio" name="p16" value="C"><div class="opcion-texto"><b>C)</b> El sentimiento mayoritario del mercado a largo plazo</div></label>
+      <label class="opcion-item"><input type="radio" name="p16" value="D"><div class="opcion-texto"><b>D)</b> La identidad de los grandes inversionistas que participaron</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: La vela muestra los 4 precios clave: apertura, cierre, máximo y mínimo del periodo analizado.</div>
+  </div>
+
+  <!-- P17 -->
+  <div class="pregunta-container abierta">
+    <div class="enunciado"><span class="num-p">17.</span> Relaciona el sesgo de <b>"exceso de confianza"</b> con el análisis de velas japonesas. ¿Cómo puede este sesgo llevar a un trader a tomar una mala decisión? Propón una estrategia para contrarrestarlo. <span class="pts">(3 pts)</span></div>
+    <div class="area-abierta">
+      <div class="criterios"><b>Criterios de Autoevaluación:</b> • Define exceso de confianza en contexto de trading &nbsp;·&nbsp; • Explica cómo afecta la lectura de patrones (sobreinterpretar señales débiles) &nbsp;·&nbsp; • Propone estrategia: stop-loss, reglas de trading, confirmación con indicadores adicionales</div>
+      <textarea class="txt-respuesta" placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="retroalimentacion abierta"><b>Guía de Respuesta sugerida:</b> El exceso de confianza hace que el trader crea que puede predecir el mercado con una sola vela, ignorando tendencias mayores. Se contrarresta usando un sistema estricto de Stop-Loss y requiriendo confirmación de indicadores de volumen u otros osciladores.</div>
+  </div>
+
+  <!-- BLOQUE 5 -->
+  <div class="bloque-header">
+    <div class="num">5</div>
+    <div class="titulo-bloque">Manejo de Tarjeta de Crédito</div>
+  </div>
+
+  <!-- P18 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="A">
+    <div class="enunciado"><span class="num-p">18.</span> <b>Diana</b> tiene una deuda de $8,000 en su tarjeta con una tasa de interés mensual del 4%. Si solo paga el mínimo cada mes, ¿cuánto interés genera únicamente en el primer mes?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p18" value="A"><div class="opcion-texto"><b>A)</b> $320 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p18" value="B"><div class="opcion-texto"><b>B)</b> $800 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p18" value="C"><div class="opcion-texto"><b>C)</b> $3,200 MXN</div></label>
+      <label class="opcion-item"><input type="radio" name="p18" value="D"><div class="opcion-texto"><b>D)</b> $1,600 MXN</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Interés mes 1 = $8,000 × 4% = $320 MXN. Con pagos mínimos este saldo se perpetúa.</div>
+  </div>
+
+  <!-- P19 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">19.</span> ¿Cuál de las siguientes prácticas genera intereses en una tarjeta de crédito?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p19" value="A"><div class="opcion-texto"><b>A)</b> Pagar el saldo total antes de la fecha límite de pago</div></label>
+      <label class="opcion-item"><input type="radio" name="p19" value="B"><div class="opcion-texto"><b>B)</b> Pagar solo el monto mínimo requerido cada mes</div></label>
+      <label class="opcion-item"><input type="radio" name="p19" value="C"><div class="opcion-texto"><b>C)</b> Usar la tarjeta en compras menores al 30% del límite</div></label>
+      <label class="opcion-item"><input type="radio" name="p19" value="D"><div class="opcion-texto"><b>D)</b> Domiciliar el pago automático del saldo total</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Pagar solo el mínimo deja saldo remanente sobre el que se calculan intereses al siguiente corte.</div>
+  </div>
+
+  <!-- P20 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="C">
+    <div class="enunciado"><span class="num-p">20.</span> ¿Qué porcentaje del límite de crédito se recomienda NO superar para mantener un historial crediticio saludable en el Buró de Crédito?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p20" value="A"><div class="opcion-texto"><b>A)</b> 80%</div></label>
+      <label class="opcion-item"><input type="radio" name="p20" value="B"><div class="opcion-texto"><b>B)</b> 60%</div></label>
+      <label class="opcion-item"><input type="radio" name="p20" value="C"><div class="opcion-texto"><b>C)</b> 30%</div></label>
+      <label class="opcion-item"><input type="radio" name="p20" value="D"><div class="opcion-texto"><b>D)</b> 10%</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Utilizar más del 30% del límite impacta negativamente el score crediticio en el Buró.</div>
+  </div>
+
+  <!-- P21 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">21.</span> ¿Qué significa el <b>CAT (Costo Anual Total)</b> en una tarjeta de crédito y por qué es el indicador más importante al comparar productos financieros?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p21" value="A"><div class="opcion-texto"><b>A)</b> Es la cuota de membresía anual cobrada por el banco emisor</div></label>
+      <label class="opcion-item"><input type="radio" name="p21" value="B"><div class="opcion-texto"><b>B)</b> Es el porcentaje que representa el costo total del crédito: incluye tasa de interés, comisiones y seguros</div></label>
+      <label class="opcion-item"><input type="radio" name="p21" value="C"><div class="opcion-texto"><b>C)</b> Es el límite de crédito máximo aprobado según el perfil del cliente</div></label>
+      <label class="opcion-item"><input type="radio" name="p21" value="D"><div class="opcion-texto"><b>D)</b> Es el número de meses sin intereses disponibles en compras departamentales</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: El CAT incluye todos los costos reales. Es el único indicador que permite comparar tarjetas de manera justa.</div>
+  </div>
+
+  <!-- P22 -->
+  <div class="pregunta-container abierta">
+    <div class="enunciado"><span class="num-p">22.</span> <b>Roberto</b> tiene una deuda de $20,000 en su tarjeta con una tasa de interés del 3.5% mensual. Solo puede pagar $700 al mes (mínimo). Demuestra con cálculo por qué su deuda nunca disminuye y propón una estrategia financiera concreta para salir de esa situación. <span class="pts">(3 pts)</span></div>
+    <div class="area-abierta">
+      <div class="criterios"><b>Criterios de Autoevaluación:</b> • Calcula interés mes 1 ($20,000 × 3.5% = $700): el pago mínimo cubre solo intereses &nbsp;·&nbsp; • Explica el concepto de "deuda trampa" &nbsp;·&nbsp; • Propone estrategia: aumentar pago, recortar deseos, consolidar deuda</div>
+      <textarea class="txt-respuesta" placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="retroalimentacion abierta"><b>Guía de Respuesta sugerida:</b> El interés generado en el primer mes es de exactamente $700 ($20,000 × 0.035). Por lo tanto, el pago de $700 se va por completo a pagar intereses y el capital no baja ni un peso. Estrategia: pagar más del mínimo, consolidar la deuda a una tasa menor o suspender el uso de la tarjeta.</div>
+  </div>
+
+  <!-- BLOQUE 6 -->
+  <div class="bloque-header">
+    <div class="num">6</div>
+    <div class="titulo-bloque">Sesgos Cognitivos en las Finanzas del Comportamiento</div>
+  </div>
+
+  <!-- P23 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">23.</span> Una acción ha subido durante 5 días consecutivos. Sofía decide comprar porque cree que "la racha va a continuar". ¿Qué sesgo está manifestando?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p23" value="A"><div class="opcion-texto"><b>A)</b> Aversión a las pérdidas</div></label>
+      <label class="opcion-item"><input type="radio" name="p23" value="B"><div class="opcion-texto"><b>B)</b> Sesgo de disponibilidad / Representatividad</div></label>
+      <label class="opcion-item"><input type="radio" name="p23" value="C"><div class="opcion-texto"><b>C)</b> Disonancia cognitiva</div></label>
+      <label class="opcion-item"><input type="radio" name="p23" value="D"><div class="opcion-texto"><b>D)</b> Contabilidad mental</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Sofía sobrepondera eventos recientes (sesgo de disponibilidad) y asume que el patrón pasado predice el futuro (representatividad).</div>
+  </div>
+
+  <!-- P24 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="C">
+    <div class="enunciado"><span class="num-p">24.</span> <b>Fernando</b> compró una acción a $500 y hoy vale $180. Se niega a vender porque "ya bajó demasiado, no puede bajar más". ¿Qué sesgo combina esta situación?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p24" value="A"><div class="opcion-texto"><b>A)</b> Sesgo de disponibilidad</div></label>
+      <label class="opcion-item"><input type="radio" name="p24" value="B"><div class="opcion-texto"><b>B)</b> Efecto manada</div></label>
+      <label class="opcion-item"><input type="radio" name="p24" value="C"><div class="opcion-texto"><b>C)</b> Anclaje + Aversión a las pérdidas</div></label>
+      <label class="opcion-item"><input type="radio" name="p24" value="D"><div class="opcion-texto"><b>D)</b> Contabilidad mental</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: Fernando está anclado al precio de $500 y además evita vender para no materializar la pérdida (aversión a las pérdidas).</div>
+  </div>
+
+  <!-- P25 -->
+  <div class="pregunta-container opcion-multiple" data-correcta="B">
+    <div class="enunciado"><span class="num-p">25.</span> La Hipótesis de Mercados Eficientes (EMH) supone que los inversores son racionales y la información se refleja instantáneamente en los precios. ¿Cuál fue el principal evento que debilitó esta teoría?</div>
+    <div class="opciones-container">
+      <label class="opcion-item"><input type="radio" name="p25" value="A"><div class="opcion-texto"><b>A)</b> La creación de la Bolsa Mexicana de Valores en 1933</div></label>
+      <label class="opcion-item"><input type="radio" name="p25" value="B"><div class="opcion-texto"><b>B)</b> La crisis financiera de 2008, que demostró que el riesgo real no estaba incorporado en los precios</div></label>
+      <label class="opcion-item"><input type="radio" name="p25" value="C"><div class="opcion-texto"><b>C)</b> La introducción de las criptomonedas en 2009</div></label>
+      <label class="opcion-item"><input type="radio" name="p25" value="D"><div class="opcion-texto"><b>D)</b> La prohibición del trading de alta frecuencia en Europa</div></label>
+    </div>
+    <div class="retroalimentacion">✔ Retroalimentación: La crisis de 2008 evidenció que los mercados no eran eficientes y que el riesgo real no estaba reflejado en los precios.</div>
+  </div>
+
+  <!-- P26 -->
+  <div class="pregunta-container abierta">
+    <div class="enunciado"><span class="num-p">26.</span> Identifica <b>TRES sesgos cognitivos</b> en la siguiente situación y explica cada uno: <em>"Andrea invirtió $40,000 en una franquicia porque sus primas ganaron dinero con ella. Aunque lleva 4 meses sin recibir pagos, no exige información porque 'seguro es un retraso temporal'. Solo busca noticias que hablan bien de la empresa."</em> <span class="pts">(3 pts)</span></div>
+    <div class="area-abierta">
+      <div class="criterios"><b>Criterios de Autoevaluación:</b> • Efecto Manada (siguió a sus primas) &nbsp;·&nbsp; • Conservadurismo / Aversión a pérdidas (no actúa ante señales de alerta) &nbsp;·&nbsp; • Disonancia cognitiva / Sesgo de confirmación (solo lee noticias favorables)</div>
+      <textarea class="txt-respuesta" placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="retroalimentacion abierta"><b>Guía de Respuesta sugerida:</b> 1) Efecto Manada por imitar a sus primas sin análisis propio. 2) Sesgo de Confirmación al solo buscar noticias positivas que validen su decisión. 3) Disonancia Cognitiva / Aversión a la pérdida al autoengañarse diciendo que es un "retraso temporal" para no aceptar que perdió su dinero.</div>
+  </div>
+
+  <!-- Controles finales -->
+  <div class="barra-inferior">
+    <button class="btn btn-evaluar" onclick="evaluarExamen()">Calificar Examen</button>
+    <button class="btn btn-reiniciar" onclick="reiniciarExamen()">Reiniciar</button>
+  </div>
+
+  <div id="resultado" class="resultado-global"></div>
+
+</div>
+
+<script>
+  // Agregar interactividad visual al hacer clic en las opciones
+  document.querySelectorAll('.opcion-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const contenedor = this.closest('.opciones-container');
+      contenedor.querySelectorAll('.opcion-item').forEach(i => i.classList.remove('seleccionada'));
+      this.classList.add('seleccionada');
+    });
+  });
+
+  function evaluarExamen() {
+    let totalPreguntas = 0;
+    let aciertos = 0;
+    
+    // Evaluar preguntas de opción múltiple
+    document.querySelectorAll('.pregunta-container').forEach(pregunta => {
+      pregunta.classList.add('revisado');
+      
+      if (pregunta.classList.contains('opcion-multiple')) {
+        totalPreguntas++;
+        const correcta = pregunta.getAttribute('data-correcta');
+        const seleccionada = pregunta.querySelector('input[type="radio"]:checked');
+        
+        // Limpiar estilos previos
+        pregunta.querySelectorAll('.opcion-item').forEach(item => {
+          item.classList.remove('correcto', 'incorrecto');
+          const radio = item.querySelector('input');
+          if (radio.value === correcta) {
+            item.classList.add('correcto');
+          }
+        });
+
+        if (seleccionada) {
+          if (seleccionada.value === correcta) {
+            aciertos++;
+          } else {
+            seleccionada.closest('.opcion-item').classList.add('incorrecto');
+          }
+        }
+      }
+    });
+
+    // Mostrar el resultado global para la sección de opción múltiple
+    const resultadoDiv = document.getElementById('resultado');
+    resultadoDiv.style.display = 'block';
+    resultadoDiv.innerHTML = `Puntuación en opción múltiple: ${aciertos} de ${totalPreguntas} correctas (${Math.round((aciertos/totalPreguntas)*100)}%).<br><small style="font-size:11pt; font-weight:normal; color:#555;">Por favor, compara tus respuestas en las preguntas abiertas con la guía de autoevaluación mostrada debajo de cada una.</small>`;
+    
+    window.scrollTo({ top: resultadoDiv.offsetTop, behavior: 'smooth' });
+  }
+
+  function reiniciarExamen() {
+    document.querySelectorAll('.pregunta-container').forEach(pregunta => {
+      pregunta.classList.remove('revisado');
+      pregunta.querySelectorAll('.opcion-item').forEach(item => {
+        item.classList.remove('correcto', 'incorrecto', 'seleccionada');
+      });
+      const radio = pregunta.querySelector('input[type="radio"]:checked');
+      if (radio) radio.checked = false;
+      
+      const textarea = pregunta.querySelector('textarea');
+      if (textarea) textarea.value = '';
+    });
+
+    const resultadoDiv = document.getElementById('resultado');
+    resultadoDiv.style.display = 'none';
+    resultadoDiv.innerHTML = '';
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
